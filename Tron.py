@@ -1,12 +1,17 @@
 import pygame
 import time
 import random
+import os
+import sys
  
 # Define some colors
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
+LIGHTBLUE = (4, 229, 225)
+ORANGE = (249, 141, 0)
+BLUE = (0, 73, 209)
  
 pygame.init()
  
@@ -14,7 +19,7 @@ pygame.init()
 size = (500, 500)
 screen = pygame.display.set_mode(size)
  
-pygame.display.set_caption("Tron")
+pygame.display.set_caption("T R O N")
  
 # Loop until the user clicks the close button.
 done = False
@@ -27,54 +32,131 @@ trailX = [46]
 trailY = [50]
 robotrailX = [454]
 robotrailY = [450]
+animationtrailX = [434]
+animationtrailY = [450]
+animationcolor = [ORANGE]
 playerX = 50
 playerY = 50
 roboY = 450
 roboX = 450
+animationX = 430
+animationY = 450
 playerX_speed = 1
 playerY_speed = 0
-roboX_speed = -1
-roboY_speed = 0
+roboX_speed = 0
+roboY_speed = -1
+animationX_speed = -1
+animationY_speed = 0
 death = False
 win = False
 speed = 2
-imposibru = False #this variable decides whether the AI is almost impossible to beat
-donesetup = False
 Continue = False
+end = False
+turning = False
 
 #game setup loop
-while not donesetup and not Continue:
+while not Continue:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            donesetup = True
+            mode = "human"
             done = True
+            end = True
+            Continue = True
+
 
     #logic
     pos = pygame.mouse.get_pos()
     mouseX = pos[0]
     mouseY = pos[1]
     pressed1, pressed2, pressed3 = pygame.mouse.get_pressed()
-    if pressed1 and (mouseX <=250):
+    if pressed1 and (mouseX>=160) and (mouseX<=340) and (mouseY >= 360) and (mouseY <= 400):
+        mode = "human"
+        done = True
+        end = True
+        Continue = True
+    elif pressed1 and (mouseX <=250):
         mode = "human"
         Continue = True
     elif pressed1 and (mouseX > 250):
         mode = "computer"
         Continue = True
+
+    """animation control code"""
+    if (animationX >= 470) and (animationX_speed == 1):
+        animationX_speed = 0
+        animationY_speed = 1
+    elif (animationX <= 30) and (animationX_speed == -1):
+        animationX_speed = 0
+        animationY_speed = -1
+    elif (animationY >= 470) and (animationY_speed == 1):
+        animationX_speed = -1
+        animationY_speed = 0
+    elif (animationY <= 30) and (animationY_speed == -1):
+        animationX_speed = 1
+        animationY_speed = 0
+
+    if len(animationtrailX)>200:
+        del animationtrailX[0]
+        del animationtrailY[0]
+        del animationcolor[0]
+    animationtrailX.append(animationX)
+    animationtrailY.append(animationY)
+    if (animationX >= 250):
+        animationcolor.append(ORANGE)
+    elif (animationX < 250):
+        animationcolor.append(LIGHTBLUE)
+        
+
+    animationX += animationX_speed*speed
+    animationY += animationY_speed*speed
+    
     #display
     screen.fill(BLACK)
-    pygame.draw.rect(screen,GREEN,[0,0,250,500])
-    pygame.draw.rect(screen,RED,[250,0,250,500])
-    pygame.draw.rect(screen,BLACK,[0,0,500,500], 10)
+    pygame.draw.rect(screen,LIGHTBLUE,[0,0,500,500], 10)
+    for i in range(len(animationtrailX)):
+        pygame.draw.rect(screen,animationcolor[i],[animationtrailX[i],animationtrailY[i],4,4])
+    pygame.draw.rect(screen,WHITE,[animationX,animationY,4,4])
+    pygame.draw.line(screen, BLUE, [70, 170], [430, 170], 5)
+
+    pygame.draw.line(screen, ORANGE, [250, 497], [500, 497], 5)
+    pygame.draw.line(screen, ORANGE, [497, 0], [497, 500], 5)
+    pygame.draw.line(screen, ORANGE, [250, 2], [500, 2], 6)
+    pygame.draw.line(screen, ORANGE, [250, 0], [250, 80], 5)
+    pygame.draw.line(screen, ORANGE, [248, 78], [440, 78], 5)
+    pygame.draw.line(screen, ORANGE, [440, 76], [440, 215], 5)
+    pygame.draw.line(screen, ORANGE, [442, 218], [250, 218], 5)
+    pygame.draw.line(screen, ORANGE, [252, 218], [252, 500], 5)
+    
+    pygame.draw.line(screen, LIGHTBLUE, [245, 0], [245, 80], 5)
+    pygame.draw.line(screen, LIGHTBLUE, [247, 78], [60, 78], 5)
+    pygame.draw.line(screen, LIGHTBLUE, [60, 76], [60, 215], 5)
+    pygame.draw.line(screen, LIGHTBLUE, [58, 218], [249, 218], 5)
+    pygame.draw.line(screen, LIGHTBLUE, [247, 218], [247, 500], 5)
+
+    pygame.draw.line(screen, ORANGE, [250, 357], [330, 357], 5)
+    pygame.draw.line(screen, ORANGE, [329, 355], [329, 404], 5)
+    pygame.draw.line(screen, ORANGE, [329, 402], [250, 402], 5)
+
+    pygame.draw.line(screen, LIGHTBLUE, [245, 357], [170, 357], 5)
+    pygame.draw.line(screen, LIGHTBLUE, [171, 355], [171, 404], 5)
+    pygame.draw.line(screen, LIGHTBLUE, [171, 402], [245, 402], 5)
+
     startfont = pygame.font.SysFont('Calibri', 25, True, False)
     humantext = startfont.render("Human v.s. Human",True,WHITE)
     screen.blit(humantext, [25, 240])
     robotext = startfont.render("Human v.s. Computer",True,WHITE)
     screen.blit(robotext, [260, 240])
-    pygame.draw.rect(screen,BLACK,[190,60,120,40])
-    robotext = startfont.render("Click one",True,WHITE)
-    screen.blit(robotext, [205, 70])
+    pygame.draw.rect(screen,BLACK,[190,360,120,40])
+    robotext = startfont.render("Click a side to begin",True,BLUE)
+    screen.blit(robotext, [140, 185])
+    robotext = startfont.render("Close Program",True,WHITE)
+    screen.blit(robotext, [175, 370])
+
+    Titlefont = pygame.font.SysFont('Times New Roman', 100, True, False)
+    Titletext = Titlefont.render("T R O N",True,BLUE)
+    screen.blit(Titletext, [70, 70])
     
-    #display to screen
+        #display to screen
     pygame.display.flip()
 
 pygame.mouse.set_visible(False)
@@ -85,37 +167,46 @@ while not done:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             done = True
-
+            end = True
+            
     # User pressed down on a key
         elif event.type == pygame.KEYDOWN:
         # Figure out if it was an arrow key. If so
         # adjust speed.
             if event.key == pygame.K_LEFT:
-                playerX_speed = -1
-                playerY_speed = 0
+                if (playerX_speed == 0):
+                    playerX_speed = -1
+                    playerY_speed = 0
             elif event.key == pygame.K_RIGHT:
-                playerX_speed = 1
-                playerY_speed = 0
+                if (playerX_speed == 0):
+                    playerX_speed = 1
+                    playerY_speed = 0
             elif event.key == pygame.K_UP:
-                playerY_speed = -1
-                playerX_speed = 0
+                if (playerY_speed == 0):
+                    playerY_speed = -1
+                    playerX_speed = 0
             elif event.key == pygame.K_DOWN:
-                playerY_speed = 1
-                playerX_speed = 0
+                if (playerY_speed == 0):
+                    playerY_speed = 1
+                    playerX_speed = 0
 
             if (mode == "human"):
                 if event.key == pygame.K_w:
-                    roboY_speed = -1
-                    roboX_speed = 0
+                    if (roboY_speed == 0):
+                        roboY_speed = -1
+                        roboX_speed = 0
                 elif event.key == pygame.K_s:
-                    roboY_speed = 1
-                    roboX_speed = 0
+                    if (roboY_speed == 0):
+                        roboY_speed = 1
+                        roboX_speed = 0
                 elif event.key == pygame.K_d:
-                    roboX_speed = 1
-                    roboY_speed = 0
+                    if (roboX_speed == 0):
+                        roboX_speed = 1
+                        roboY_speed = 0
                 elif event.key == pygame.K_a:
-                    roboX_speed = -1
-                    roboY_speed = 0
+                    if (roboX_speed == 0):
+                        roboX_speed = -1
+                        roboY_speed = 0
     # --- Game logic should go here
     """collision with line check(it happens before I add to the line because otherwise people wouild just run into the lines they make"""
     for i in range(len(trailX)):
@@ -123,10 +214,13 @@ while not done:
             death = True
         elif (abs(playerX-robotrailX[i])<speed) and (abs(playerY-robotrailY[i])<speed):
             death = True
-        """elif (abs(roboX-robotrailX[i])<2) and (abs(roboY-robotrailY[i])<2):
-            win = True
-        elif (abs(roboX-trailX[i])<2) and (abs(roboY-trailY[i])<2):
-            win = True"""
+        if (turning == False):
+            if (abs(roboX-robotrailX[i])<2) and (abs(roboY-robotrailY[i])<2):
+                win = True
+            elif (abs(roboX-trailX[i])<2) and (abs(roboY-trailY[i])<2):
+                win = True
+
+    turning = False
 
     """line drawing algorithm for both players"""
     trailX.append(playerX)
@@ -136,61 +230,100 @@ while not done:
 
     """robot decision"""
     if (mode == "computer"):
-        if (imposibru == False):
-            roboaction = random.randint(1,25)
-            if (roboX > 480) or (roboX < 10) or (roboY > 480) or (roboY < 10):
-                move = random.randint(1,2)
-                if (roboX > 480) or (roboX < 10):
-                    if (roboX > 480):
-                        roboX -= 4
-                    elif (roboX < 10):
-                        roboX += 4
-                    roboX_speed = 0
-                    if (roboY > 470):
-                        roboY_speed = -1
-                        roboY -= 4
-                    elif (roboY < 20):
-                        roboY_speed = 1
-                        roboY += 4
-                    else:
-                        if (move == 1):
-                           roboY_speed = -1
-                           roboY -= 4
-                        if (move == 2):
-                           roboY_speed = 1
-                           roboY += 4
-                if (roboY > 480) or (roboY < 10):
-                    if (roboY > 480):
-                        roboY -= 1
-                    elif (roboY < 10):
-                        roboY += 1
-                    roboY_speed = 0
-                    if (roboX > 470):
-                        roboX_speed = -1
-                    elif (roboX < 20):
-                        roboX_speed = 1
-                    else:
-                        if (move == 1):
-                           roboX_speed = -1
+        roboaction = random.randint(1,100)
+        if (roboaction == 1):
+            if (roboX_speed == 1) or (roboX_speed == -1):
+                roboY_speed = 1
+                roboX_speed = 0
+            elif (roboY_speed == 1) or (roboY_speed == -1):
+                roboX_speed = 1
+                roboY_speed = 0
+        if (roboaction == 2):
+            if (roboX_speed == 1) or (roboX_speed == -1):
+                roboY_speed = -1
+                roboX_speed = 0
+            elif (roboY_speed == 1) or (roboY_speed == -1):
+                roboX_speed = -1
+                roboY_speed = 0
             
-                        if (move == 2):
-                           roboX_speed = 1
+        if (roboX > 480) or (roboX < 10) or (roboY > 480) or (roboY < 10):
+            move = random.randint(1,2)
+            if (roboX > 470) or (roboX < 20):
+                turning = True
+                roboX_speed = 0
+                if (roboY > 450):
+                    roboY_speed = -1
+                elif (roboY < 50):
+                    roboY_speed = 1
+                else:
+                    if (move == 1):
+                        roboY_speed = -1
+                    if (move == 2):
+                        roboY_speed = 1
+            if (roboY > 470) or (roboY < 20):
+                roboY_speed = 0
+                turning = True
+                if (roboX > 450):
+                    roboX_speed = -1
+                elif (roboX < 50):
+                    roboX_speed = 1
+                else:
+                    if (move == 1):
+                        roboX_speed = -1
+            
+                    if (move == 2):
+                        roboX_speed = 1
 
-            #this code doesn't work
-            """if (roboaction == 1):
-                if (roboX_speed == 1) or (roboX_speed == -1):
+        roboaction = random.randint(1,2)
+        for i in range(len(trailX)):
+            if (abs((roboX+(roboX_speed*7))-trailX[i])<6) and (abs((roboY+(roboY_speed*7))-trailY[i])<6):
+                if (roboX_speed != 0):
+                    roboX_speed = 0
+                    if (roboaction == 1):
+                        roboY_speed = 1
+                    if (roboaction == 2):
+                        roboY_speed = -1
+                elif (roboY_speed != 0):
                     roboY_speed = 0
-                    roboX_speed = 1
-                if (roboY_speed == 1) or (roboY_speed == -1):
-                    roboX_speed = 1
+                    if (roboaction == 1):
+                        roboX_speed = 1
+                    if (roboaction == 2):
+                        roboX_speed = -1
+        for i in range(len(robotrailX)):
+            if (abs((roboX+(roboX_speed*7))-robotrailX[i])<6) and (abs((roboY+(roboY_speed*7))-robotrailY[i])<6):
+                if (roboX_speed != 0):
+                    roboX_speed = 0
+                    if (roboaction == 1):
+                        roboY_speed = 1
+                        for i in range(len(robotrailX)):
+                            if (abs((roboX)-robotrailX[i])<2) and (abs((roboY+(roboY_speed*7))-robotrailY[i])<6):
+                                roboY_speed = -1
+                            if ((roboY + 5) >= 480):
+                                roboY_speed = -1
+                    if (roboaction == 2):
+                        roboY_speed = -1
+                        for i in range(len(robotrailX)):
+                            if (abs((roboX)-robotrailX[i])<2) and (abs((roboY+(roboY_speed*7))-robotrailY[i])<6):
+                                roboY_speed = 1
+                            if ((roboY - 5) <= 10):
+                                roboY_speed = 1
+                elif (roboY_speed != 0):
                     roboY_speed = 0
-            if (roboaction == 2):
-                if (roboX_speed == 1) or (roboX_speed == -1):
-                    roboY_speed = 0
-                    roboX_speed = -1
-                if (roboY_speed == 1) or (roboY_speed == -1):
-                    roboX_speed = -1
-                    roboY_speed = 0"""
+                    if (roboaction == 1):
+                        roboX_speed = 1
+                        for i in range(len(robotrailX)):
+                            if (abs((roboX+(roboX_speed*7))-robotrailX[i])<6) and (abs((roboY)-robotrailY[i])<2):
+                                roboX_speed = -1
+                            if ((roboX + 5) >= 480):
+                                roboX_speed = -1
+                    if (roboaction == 2):
+                        roboX_speed = -1
+                        for i in range(len(robotrailX)):
+                            if (abs((roboX+(roboX_speed*7))-robotrailX[i])<6) and (abs((roboY)-robotrailY[i])<2):
+                                roboX_speed = 1
+                            if ((roboX - 5) <= 10):
+                                roboX_speed = 1
+            
     
     """general movement"""
     playerX += playerX_speed*speed
@@ -214,22 +347,19 @@ while not done:
  
     # --- Drawing code should go here
     for i in range(len(trailX)):
-        pygame.draw.rect(screen, GREEN, [trailX[i], trailY[i], 4, 4])
+        pygame.draw.rect(screen, LIGHTBLUE, [trailX[i], trailY[i], 4, 4])
     for i in range(len(robotrailX)):
-        pygame.draw.rect(screen, RED, [robotrailX[i], robotrailY[i], 4, 4])
-    pygame.draw.rect(screen, GREEN, [playerX, playerY, 4, 4])
+        pygame.draw.rect(screen, ORANGE, [robotrailX[i], robotrailY[i], 4, 4])
+    pygame.draw.rect(screen, WHITE, [playerX, playerY, 4, 4])
     pygame.draw.rect(screen, WHITE, [roboX, roboY, 4, 4])
-    pygame.draw.rect(screen, RED, [0, 0, 500, 500], 5)
+    pygame.draw.rect(screen, ORANGE, [0, 0, 500, 500], 5)
     font = pygame.font.SysFont('Calibri', 25, True, False)
-    roboposition = font.render(str(roboX_speed)+", "+str(roboY_speed),True,WHITE)
-    screen.blit(roboposition, [40, 20])
-    roboposition = font.render(str(roboX)+", "+str(roboY),True,WHITE)
-    screen.blit(roboposition, [40, 40])
+    
     if (death == True):
-        text = font.render("You have lost",True,WHITE)
+        text = font.render("ORANGE has WON!",True,WHITE)
         screen.blit(text, [180, 220])
     if (win == True):
-        text = font.render("You have WON!",True,WHITE)
+        text = font.render("BLUE has WON!",True,WHITE)
         screen.blit(text, [180, 220])
         
     # --- Go ahead and update the screen with what we've drawn.
@@ -243,5 +373,6 @@ while not done:
     clock.tick(60)
  
 # Close the window and quit.
+if end == False:
+    os.execl(sys.executable, sys.executable, *sys.argv)
 pygame.quit()
-
