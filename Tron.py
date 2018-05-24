@@ -30,15 +30,15 @@ clock = pygame.time.Clock()
 #setup
 trailX = [46]
 trailY = [50]
-robotrailX = [454]
-robotrailY = [450]
+robotrailX = [250]
+robotrailY = [254]
 animationtrailX = [434]
 animationtrailY = [450]
 animationcolor = [ORANGE]
 playerX = 50
 playerY = 50
-roboY = 450
-roboX = 450
+roboY = 250
+roboX = 250
 animationX = 430
 animationY = 450
 playerX_speed = 1
@@ -102,9 +102,9 @@ while not Continue:
     animationtrailX.append(animationX)
     animationtrailY.append(animationY)
     if (animationX >= 250):
-        animationcolor.append(ORANGE)
-    elif (animationX < 250):
         animationcolor.append(LIGHTBLUE)
+    elif (animationX < 250):
+        animationcolor.append(ORANGE)
         
 
     animationX += animationX_speed*speed
@@ -230,7 +230,7 @@ while not done:
 
     """robot decision"""
     if (mode == "computer"):
-        roboaction = random.randint(1,100)
+        """roboaction = random.randint(1,180)
         if (roboaction == 1):
             if (roboX_speed == 1) or (roboX_speed == -1):
                 roboY_speed = 1
@@ -244,7 +244,7 @@ while not done:
                 roboX_speed = 0
             elif (roboY_speed == 1) or (roboY_speed == -1):
                 roboX_speed = -1
-                roboY_speed = 0
+                roboY_speed = 0"""
             
         if (roboX > 480) or (roboX < 10) or (roboY > 480) or (roboY < 10):
             move = random.randint(1,2)
