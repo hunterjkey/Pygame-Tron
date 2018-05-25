@@ -26,8 +26,6 @@ Install Wheel by typing “pip3 install wheel.” (the pip3 is to ensure that we
 If it says the requirement is already satisfied, type “pip install wheel –upgrade”
 If these commands bring up errors, like it did for me on the class computers, then don’t bother, just continue with the next steps. It probably means that these components of the installation don’t need any updating.
  ```
-![flowchart](https://github.com/hunterjkey/HunterKeyWebScraper/blob/master/Program%20Flow%20Chart.png?raw=true)
-
 
 4) Install pygame through the command line
  ```
