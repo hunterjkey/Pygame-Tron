@@ -23,7 +23,16 @@ pygame.display.set_caption("T R O N")
  
 # Loop until the user clicks the close button.
 done = False
- 
+
+#start music
+kill_sound = pygame.mixer.Sound("Derez.wav")
+try:
+    pygame.mixer.music.stop()
+    pygame.mixer.music.load('TheGameHasChanged.mp3')
+    pygame.mixer.music.play(-1)
+except Exception:
+    nothing = "nothing"
+
 # Used to manage how fast the screen updates
 clock = pygame.time.Clock()
 
@@ -161,6 +170,12 @@ while not Continue:
 
 pygame.mouse.set_visible(False)
 
+try:
+    pygame.mixer.music.stop()
+    pygame.mixer.music.load('SonOfFLynn.mp3')
+    pygame.mixer.music.play(-1)
+except Exception:
+    nothing = "nothing"
 # -------- Main Program Loop -----------
 while not done:
     # --- Main event loop
@@ -212,13 +227,17 @@ while not done:
     for i in range(len(trailX)):
         if (abs(playerX-trailX[i])<speed) and (abs(playerY-trailY[i])<speed):
             death = True
+            kill_sound.play()
         elif (abs(playerX-robotrailX[i])<speed) and (abs(playerY-robotrailY[i])<speed):
             death = True
+            kill_sound.play()
         if (turning == False):
             if (abs(roboX-robotrailX[i])<2) and (abs(roboY-robotrailY[i])<2):
                 win = True
+                kill_sound.play()
             elif (abs(roboX-trailX[i])<2) and (abs(roboY-trailY[i])<2):
                 win = True
+                kill_sound.play()
 
     turning = False
 
@@ -230,21 +249,22 @@ while not done:
 
     """robot decision"""
     if (mode == "computer"):
-        """roboaction = random.randint(1,180)
-        if (roboaction == 1):
-            if (roboX_speed == 1) or (roboX_speed == -1):
-                roboY_speed = 1
-                roboX_speed = 0
-            elif (roboY_speed == 1) or (roboY_speed == -1):
-                roboX_speed = 1
-                roboY_speed = 0
-        if (roboaction == 2):
-            if (roboX_speed == 1) or (roboX_speed == -1):
-                roboY_speed = -1
-                roboX_speed = 0
-            elif (roboY_speed == 1) or (roboY_speed == -1):
-                roboX_speed = -1
-                roboY_speed = 0"""
+        if (roboX < 440) and (roboX > 60) and (roboY > 60) and (roboY < 440):
+            roboaction = random.randint(1,180)
+            if (roboaction == 1):
+                if (roboX_speed == 1) or (roboX_speed == -1):
+                    roboY_speed = 1
+                    roboX_speed = 0
+                elif (roboY_speed == 1) or (roboY_speed == -1):
+                    roboX_speed = 1
+                    roboY_speed = 0
+            if (roboaction == 2):
+                if (roboX_speed == 1) or (roboX_speed == -1):
+                    roboY_speed = -1
+                    roboX_speed = 0
+                elif (roboY_speed == 1) or (roboY_speed == -1):
+                    roboX_speed = -1
+                    roboY_speed = 0
             
         if (roboX > 480) or (roboX < 10) or (roboY > 480) or (roboY < 10):
             move = random.randint(1,2)
@@ -281,29 +301,15 @@ while not done:
                     roboX_speed = 0
                     if (roboaction == 1):
                         roboY_speed = 1
-                    if (roboaction == 2):
-                        roboY_speed = -1
-                elif (roboY_speed != 0):
-                    roboY_speed = 0
-                    if (roboaction == 1):
-                        roboX_speed = 1
-                    if (roboaction == 2):
-                        roboX_speed = -1
-        for i in range(len(robotrailX)):
-            if (abs((roboX+(roboX_speed*7))-robotrailX[i])<6) and (abs((roboY+(roboY_speed*7))-robotrailY[i])<6):
-                if (roboX_speed != 0):
-                    roboX_speed = 0
-                    if (roboaction == 1):
-                        roboY_speed = 1
-                        for i in range(len(robotrailX)):
-                            if (abs((roboX)-robotrailX[i])<2) and (abs((roboY+(roboY_speed*7))-robotrailY[i])<6):
+                        for i in range(len(trailX)):
+                            if (abs((roboX)-trailX[i])<4) and (abs((roboY+(roboY_speed*7))-trailY[i])<6):
                                 roboY_speed = -1
                             if ((roboY + 5) >= 480):
                                 roboY_speed = -1
                     if (roboaction == 2):
                         roboY_speed = -1
-                        for i in range(len(robotrailX)):
-                            if (abs((roboX)-robotrailX[i])<2) and (abs((roboY+(roboY_speed*7))-robotrailY[i])<6):
+                        for i in range(len(trailX)):
+                            if (abs((roboX)-trailX[i])<4) and (abs((roboY+(roboY_speed*7))-trailY[i])<6):
                                 roboY_speed = 1
                             if ((roboY - 5) <= 10):
                                 roboY_speed = 1
@@ -312,14 +318,48 @@ while not done:
                     if (roboaction == 1):
                         roboX_speed = 1
                         for i in range(len(robotrailX)):
-                            if (abs((roboX+(roboX_speed*7))-robotrailX[i])<6) and (abs((roboY)-robotrailY[i])<2):
+                            if (abs((roboX+(roboX_speed*7))-trailX[i])<6) and (abs((roboY)-trailY[i])<4):
                                 roboX_speed = -1
                             if ((roboX + 5) >= 480):
                                 roboX_speed = -1
                     if (roboaction == 2):
                         roboX_speed = -1
                         for i in range(len(robotrailX)):
-                            if (abs((roboX+(roboX_speed*7))-robotrailX[i])<6) and (abs((roboY)-robotrailY[i])<2):
+                            if (abs((roboX+(roboX_speed*7))-trailX[i])<6) and (abs((roboY)-trailY[i])<4):
+                                roboX_speed = 1
+                            if ((roboX - 5) <= 10):
+                                roboX_speed = 1
+        for i in range(len(robotrailX)):
+            if (abs((roboX+(roboX_speed*7))-robotrailX[i])<6) and (abs((roboY+(roboY_speed*7))-robotrailY[i])<6):
+                if (roboX_speed != 0):
+                    roboX_speed = 0
+                    if (roboaction == 1):
+                        roboY_speed = 1
+                        for i in range(len(robotrailX)):
+                            if (abs((roboX)-robotrailX[i])<4) and (abs((roboY+(roboY_speed*7))-robotrailY[i])<6):
+                                roboY_speed = -1
+                            if ((roboY + 5) >= 480):
+                                roboY_speed = -1
+                    if (roboaction == 2):
+                        roboY_speed = -1
+                        for i in range(len(robotrailX)):
+                            if (abs((roboX)-robotrailX[i])<4) and (abs((roboY+(roboY_speed*7))-robotrailY[i])<6):
+                                roboY_speed = 1
+                            if ((roboY - 5) <= 10):
+                                roboY_speed = 1
+                elif (roboY_speed != 0):
+                    roboY_speed = 0
+                    if (roboaction == 1):
+                        roboX_speed = 1
+                        for i in range(len(robotrailX)):
+                            if (abs((roboX+(roboX_speed*7))-robotrailX[i])<6) and (abs((roboY)-robotrailY[i])<4):
+                                roboX_speed = -1
+                            if ((roboX + 5) >= 480):
+                                roboX_speed = -1
+                    if (roboaction == 2):
+                        roboX_speed = -1
+                        for i in range(len(robotrailX)):
+                            if (abs((roboX+(roboX_speed*7))-robotrailX[i])<6) and (abs((roboY)-robotrailY[i])<4):
                                 roboX_speed = 1
                             if ((roboX - 5) <= 10):
                                 roboX_speed = 1
@@ -357,7 +397,7 @@ while not done:
     
     if (death == True):
         text = font.render("ORANGE has WON!",True,WHITE)
-        screen.blit(text, [180, 220])
+        screen.blit(text, [165, 220])
     if (win == True):
         text = font.render("BLUE has WON!",True,WHITE)
         screen.blit(text, [180, 220])
@@ -367,7 +407,8 @@ while not done:
 
     #check death
     if (death == True) or (win == True):
-        time.sleep(2)
+        #kill_sound.play()
+        time.sleep(0.5)
         done = True
     # --- Limit to 60 frames per second
     clock.tick(60)
@@ -376,3 +417,4 @@ while not done:
 if end == False:
     os.execl(sys.executable, sys.executable, *sys.argv)
 pygame.quit()
+
